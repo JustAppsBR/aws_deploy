@@ -14,22 +14,22 @@ app.get('/', (request, response) => {
 // Rota para realizar toggle do dispositivo
 app.post('/', async (request, response) => {
   try {
-    const { newState } = request.body;
+    const { email, password, region, deviceId, newState } = request.body;
 
-    if (newState !== 'on' && newState !== 'off') {
-      return response.status(400).json({ error: 'O campo "newState" deve ser "on" ou "off".' });
+    if (!email || !password || !region || !deviceId || !newState) {
+      return response.status(400).json({ error: 'Parâmetros faltando. Certifique-se de fornecer email, password, region, deviceId e newState.' });
     }
 
     const connection = new ewelink({
-      email: 'william@analio.com.br',
-      password: 'wsa172wsa',
-      region: 'us',
+      email,
+      password,
+      region,
       APP_ID: 'Uw83EKZFxdif7XFXEsrpduz5YyjP7nTl',
       APP_SECRET: 'mXLOjea0woSMvK9gw7Fjsy7YlFO4iSu6'
     });
 
     // Toggle do dispositivo com base no newState
-    const status = await connection.toggleDevice('10008e9178', { state: newState });
+    const status = await connection.toggleDevice(deviceId, { state: newState });
     return response.json({ status });
   } catch (error) {
     console.error('Erro ao realizar toggle do dispositivo:', error);
